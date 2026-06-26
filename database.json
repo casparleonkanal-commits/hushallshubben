@@ -1,0 +1,22 @@
+{
+    "chores": [
+        {
+            "id": 1,
+            "title": "Diska k\u00f6ket",
+            "family_id": 101,
+            "is_completed": true
+        },
+        {
+            "id": 2,
+            "title": "G\u00e5 ut med soporna",
+            "family_id": 101,
+            "is_completed": false
+        },
+        {
+            "id": 3,
+            "title": "Klippa gr\u00e4set i Nyn\u00e4s",
+            "family_id": 102,
+            "is_completed": false
+        }
+    ]
+}
