@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from helpers import add_chore, get_chores_by_family
+from helpers import add_chore, get_chores_by_family, complete_chore
 
 app = Flask(__name__)
 
@@ -24,4 +24,12 @@ def add():
         add_chore(title, CURRENT_FAMILY_ID)
         
     # 3. Skicka tillbaka användaren till startsidan
+    return redirect("/")
+
+@app.route("/complete/<int:chore_id>", methods=["POST"])
+def complete(chore_id):
+    # 1. Kalla på din färdiga funktion i helpers.py för att uppdatera i Supabase
+    complete_chore(chore_id)
+    
+    # 2. Skicka tillbaka användaren till startsidan så listan uppdateras
     return redirect("/")

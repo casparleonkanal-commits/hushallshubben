@@ -25,15 +25,25 @@
         <button type="submit">Lägg till</button>
     </form>
 
-    <!-- Lista med sysslor (Här använder vi Jinja som du lärde dig i CS50!) -->
+    <!-- Lista med sysslor -->
     <ul class="chore-list">
         {% for chore in chores %}
             <li class="chore-item">
                 <span class="{% if chore.is_completed %}completed{% endif %}">
                     {{ chore.title }}
                 </span>
+                
                 <span>
-                    {% if chore.is_completed %}✅{% else %}⏳{% endif %}
+                    {% if chore.is_completed %}
+                        ✅
+                    {% else %}
+                        <!-- Ett litet formulär med en knapp för varje enskild syssla -->
+                        <form action="/complete/{{ chore.id }}" method="POST" style="display: inline;">
+                            <button type="submit" style="padding: 2px 8px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Klar! 👍
+                            </button>
+                        </form>
+                    {% endif %}
                 </span>
             </li>
         {% endfor %}
