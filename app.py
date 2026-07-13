@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from helpers import add_chore, get_chores_by_family, complete_chore
+from helpers import add_chore, get_chores_by_family, complete_chore, get_users_by_family
 
 app = Flask(__name__)
 
@@ -8,22 +8,21 @@ CURRENT_FAMILY_ID = 1
 
 @app.route("/")
 def index():
-    # 1. Hämta alla sysslor live från Supabase via din helpers-fil
     chores = get_chores_by_family(CURRENT_FAMILY_ID)
-    
-    # 2. Skicka sysslorna till HTML-mallen
-    return render_template("index.html", chores=chores)
+    # Hämta användarna live från Supabase
+    users = get_users_by_family(CURRENT_FAMILY_ID)
+
+    # Skicka med både sysslor OCH användare till HTML
+    return render_template("index.html", chores=chores, users=users)
 
 @app.route("/add", methods=["POST"])
 def add():
-    # 1. Fånga upp vad användaren skrev i formuläret
     title = request.form.get("title")
-    
-    # 2. Om textfältet inte var tomt, spara i Supabase
+    assigned_to = request.form.get("assigned_to") # Fånga upp vem som blev vald
+
     if title:
-        add_chore(title, CURRENT_FAMILY_ID)
-        
-    # 3. Skicka tillbaka användaren till startsidan
+        add_chore(title, CURRENT_FAMILY_ID, assigned_to)
+
     return redirect("/")
 
 @app.route("/complete/<int:chore_id>", methods=["POST"])

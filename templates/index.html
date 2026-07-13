@@ -20,8 +20,17 @@
     <p>Här är familjens sysslor live från Supabase:</p>
 
     <!-- Formulär för att lägga till en syssla -->
-    <form action="/add" method="POST">
+    <form action="/add" method="POST" style="margin-bottom: 20px;">
         <input type="text" name="title" placeholder="T.ex. Dammsuga vardagsrummet" required>
+        
+        <!-- Rullgardinsmeny med familjemedlemmar -->
+        <select name="assigned_to">
+            <option value="">Ingen specifik (Alla) 👥</option>
+            {% for user in users %}
+                <option value="{{ user.id }}">{{ user.name }}</option>
+            {% endfor %}
+        </select>
+
         <button type="submit">Lägg till</button>
     </form>
 
