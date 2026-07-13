@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hushållshubben</title>
+    <!-- Vi lägger till enkel styling direkt så det ser okej ut från start -->
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .chore-list { list-style: none; padding: 0; }
+        .chore-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .completed { text-decoration: line-through; color: #888; }
+        input[type="text"] { padding: 8px; width: 70%; }
+        button { padding: 8px 15px; }
+    </style>
+</head>
+<body>
+
+    <h1>Hushållshubben 🧹</h1>
+    <p>Här är familjens sysslor live från Supabase:</p>
+
+    <!-- Formulär för att lägga till en syssla -->
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="T.ex. Dammsuga vardagsrummet" required>
+        <button type="submit">Lägg till</button>
+    </form>
+
+    <!-- Lista med sysslor (Här använder vi Jinja som du lärde dig i CS50!) -->
+    <ul class="chore-list">
+        {% for chore in chores %}
+            <li class="chore-item">
+                <span class="{% if chore.is_completed %}completed{% endif %}">
+                    {{ chore.title }}
+                </span>
+                <span>
+                    {% if chore.is_completed %}✅{% else %}⏳{% endif %}
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
