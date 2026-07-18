@@ -25,8 +25,9 @@ def add_chore(title, family_id, assigned_to=None):
     return data
 
 def get_chores_by_family(family_id):
-    """Hämtar alla sysslor för en specifik familj från Supabase"""
-    response = supabase.table("chores").select("*").eq("family_id", family_id).execute()
+    """Hämtar alla sysslor för en specifik familj och inkluderar namnet på den tilldelade användaren"""
+    # Vi hämtar allt (*), samt namnet från den länkade users-tabellen
+    response = supabase.table("chores").select("*, users(name)").eq("family_id", family_id).execute()
     return response.data
 
 def complete_chore(chore_id):

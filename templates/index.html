@@ -39,14 +39,25 @@
         {% for chore in chores %}
             <li class="chore-item">
                 <span class="{% if chore.is_completed %}completed{% endif %}">
-                    {{ chore.title }}
+                    <!-- Visar sysslans titel -->
+                    <strong>{{ chore.title }}</strong> 
+                    
+                    <!-- Kollar om sysslan är tilldelad till någon och visar namnet -->
+                    {% if chore.users and chore.users.name %}
+                        <span style="color: #666; font-size: 0.9em; margin-left: 10px;">
+                            👤 {{ chore.users.name }}
+                        </span>
+                    {% else %}
+                        <span style="color: #999; font-size: 0.9em; margin-left: 10px;">
+                            👥 Alla
+                        </span>
+                    {% endif %}
                 </span>
                 
                 <span>
                     {% if chore.is_completed %}
                         ✅
                     {% else %}
-                        <!-- Ett litet formulär med en knapp för varje enskild syssla -->
                         <form action="/complete/{{ chore.id }}" method="POST" style="display: inline;">
                             <button type="submit" style="padding: 2px 8px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
                                 Klar! 👍
