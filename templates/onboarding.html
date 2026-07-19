@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8"><title>Välj Hushåll - Hushållshubben</title>
+    <style>body{font-family:Arial; max-width:500px; margin:60px auto; padding:20px;} .box{border:1px solid #ccc; padding:20px; margin-bottom:20px; border-radius:6px;}</style>
+</head>
+<body>
+    <h1>Välkommen {{ session["user_name"] }}! 👋</h1>
+    <p>För att använda Hushållshubben behöver du antingen skapa en ny familjegrupp eller gå med i en befintlig.</p>
+    
+    <div class="box">
+        <h3>Alternativ 1: Skapa ett nytt hushåll (Du blir Admin 👑)</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="create">
+            <input type="text" name="family_name" placeholder="T.ex. Familjen Andersson" required style="padding:8px; width:60%;">
+            <button type="submit" style="padding:8px 12px; background:#3b82f6; color:white; border:none; border-radius:4px;">Skapa</button>
+        </form>
+    </div>
+
+    <div class="box">
+        <h3>Alternativ 2: Gå med i ett befintligt hushåll (Medlem 👥)</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="join">
+            <input type="text" name="invite_code" placeholder="Skriv inbjudningskod (t.ex. HH-ABCD)" required style="padding:8px; width:60%;">
+            <button type="submit" style="padding:8px 12px; background:#10b981; color:white; border:none; border-radius:4px;">Gå med</button>
+        </form>
+    </div>
+    <a href="/logout">Logga ut</a>
+</body>
+</html>
