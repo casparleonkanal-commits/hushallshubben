@@ -1,0 +1,17 @@
+{
+  "short_name": "Hushållshubben",
+  "name": "Hushållshubben - Smart familjeplanering",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3061/3061331.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "display": "standalone",
+  "orientation": "portrait"
+}

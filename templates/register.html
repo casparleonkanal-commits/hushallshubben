@@ -1,17 +1,109 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8"><title>Registrera konto - Hushållshubben</title>
-    <style>body{font-family:Arial; max-width:400px; margin:80px auto; padding:20px;}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrera dig - Hushållshubben</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .auth-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 { margin-top: 0; color: #0f172a; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-appearance: none; /* Fixar iOS input-buggar */
+        }
+        input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background: #4338ca; }
+        .switch-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        .switch-text a { color: #4f46e5; text-decoration: none; font-weight: 500; }
+        .error-flash {
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            border: 1px solid #fee2e2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Skapa konto 🔑</h1>
-    <form method="POST">
-        <input type="text" name="name" placeholder="Ditt namn" required style="width:100%; padding:10px; margin-bottom:10px;"><br>
-        <input type="email" name="email" placeholder="E-postadress" required style="width:100%; padding:10px; margin-bottom:10px;"><br>
-        <input type="password" name="password" placeholder="Välj lösenord" required style="width:100%; padding:10px; margin-bottom:15px;"><br>
-        <button type="submit" style="width:100%; padding:10px; background:#3b82f6; color:white; border:none; border-radius:4px;">Registrera</button>
-    </form>
-    <p style="text-align:center;"><a href="/login">Redan ett konto? Logga in här</a></p>
+
+    <div class="auth-card">
+        <h2>Registrera dig 📝</h2>
+        
+        <!-- Här visas felmeddelanden om du använder flash i Flask -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="error-flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Namn</label>
+                <input type="text" id="name" name="name" placeholder="Ditt namn" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-post</label>
+                <input type="email" id="email" name="email" placeholder="exempel@domän.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Lösenord</label>
+                <input type="password" id="password" name="password" placeholder="Ditt lösenord" required>
+            </div>
+            <button type="submit">Registrera dig</button>
+
+        <div class="switch-text">
+            Har du redan ett konto? <a href="/login">Logga in här</a>
+        </div>
+    </div>
+
 </body>
 </html>

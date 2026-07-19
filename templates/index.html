@@ -3,6 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA-kopplingar -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#4f46e5">
+    
+    <!-- iOS support (gör att adressfältet försvinner på iPhone) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Hushållshubben">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3061/3061331.png">
+
+    <script>
+        // Registrera vår Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+                    .then(reg => console.log('Service Worker registrerad!', reg))
+                    .catch(err => console.log('Service Worker misslyckades:', err));
+            });
+        }
+    </script>
     <title>{{ family_info.name }} - Hushållshubben</title>
     <style>
         :root {
