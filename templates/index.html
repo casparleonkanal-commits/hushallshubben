@@ -1,3 +1,4 @@
+<!-- Coded entirely in HTML -->
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -32,10 +33,12 @@
             --success-hover: #059669;
             --danger: #ef4444;
             --danger-hover: #dc2626;
+            --warning: #f59e0b;
             --text-main: #1e293b;
             --text-muted: #64748b;
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
+            --border-color: #e2e8f0;
         }
 
         body {
@@ -127,7 +130,7 @@
             .add-form select { flex: 1; }
         }
 
-        .add-form input, .add-form select, .add-form button {
+        .add-form input, .add-form select, .perm-select, .admin-form input {
             padding: 10px 14px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
@@ -136,18 +139,22 @@
             font-family: inherit;
         }
 
-        .add-form input:focus, .add-form select:focus {
+        .add-form input:focus, .add-form select:focus, .perm-select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
 
         .add-form button {
+            padding: 10px 14px;
+            border-radius: 8px;
             background: var(--primary);
             color: white;
             border: none;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
+            font-family: inherit;
+            font-size: 0.95rem;
         }
 
         .add-form button:hover {
@@ -157,30 +164,39 @@
         /* Listor & Element */
         h2 {
             font-size: 1.2rem;
-            margin: 0 0 12px 0;
+            margin: 24px 0 12px 0;
             color: #334155;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .chore-list {
+        .chore-list, .perm-grid {
             list-style: none;
             padding: 0;
             margin: 0 0 30px 0;
         }
 
-        .chore-item {
+        .chore-item, .perm-card {
             background: var(--bg-card);
             padding: 14px 16px;
             border-radius: 10px;
             margin-bottom: 8px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
+        }
+
+        .chore-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid #f1f5f9;
             gap: 15px;
+        }
+
+        .perm-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .chore-main {
@@ -200,10 +216,27 @@
             font-weight: 500;
         }
 
-        .chore-actions {
+        .chore-actions, .perm-card-header {
             display: flex;
-            gap: 6px;
+            justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+
+        .perm-card-header {
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .perm-action-form {
+            display: flex;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .perm-select {
+            flex: 1;
+            padding: 8px 12px;
         }
 
         .btn-btn {
@@ -221,8 +254,19 @@
             background: var(--success);
             color: white;
         }
-
         .btn-success:hover { background: var(--success-hover); }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
 
         .btn-icon-danger {
             background: #fef2f2;
@@ -232,31 +276,181 @@
             border: none;
             cursor: pointer;
         }
-
         .btn-icon-danger:hover {
             background: #fee2e2;
             color: var(--danger-hover);
         }
 
-        /* Historik-specifikt */
-        .history-section {
-            opacity: 0.7;
+        /* Status Badges för Permanenta kort */
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-badge.dirty { background: #fef2f2; color: #b91c1c; }
+        .status-badge.running { background: #fffbeb; color: #b45309; animation: pulse 2s infinite; }
+        .status-badge.ready { background: #ecfdf5; color: #047857; }
+        .status-badge.zone-status { background: #f1f5f9; color: #475569; text-transform: none; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
-        .history-section .chore-title {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-
-        .history-section .chore-item {
-            background: #f8fafc;
-        }
-
-        .check-mark {
-            color: var(--success);
+        /* Admin Inställningsknapp */
+        .btn-admin-settings {
+            background-color: #475569;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: bold;
-            font-size: 1.2rem;
-            margin-right: 4px;
+            margin: 30px 0;
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .btn-admin-settings:hover { background-color: #334155; }
+
+        /* MODAL (Popup-fönster) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 1.3rem; }
+
+        .close-modal {
+            color: #94a3b8;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close-modal:hover { color: #475569; }
+
+        .admin-chore-section {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .admin-chore-section h3 { margin: 0 0 8px 0; font-size: 1.05rem; color: #1e293b; }
+        .admin-chore-section h4 { margin: 10px 0 4px 0; font-size: 0.9rem; color: #64748b; }
+        
+        .admin-chore-section ul {
+            margin: 0 0 10px 0;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .admin-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .admin-form input {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            flex: 1;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* Säkerställer att inget flyter utanför */
+        .admin-modal-scroll-area {
+             max-height: 500px; 
+             overflow-y: auto; 
+             padding-right: 5px;
+             display: flex;
+             flex-direction: column;
+             gap: 15px;
+        }
+
+        /* Container för formulären inuti korten */
+        .admin-form-wrapper {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-color);
+            width: 100%;
+        }
+
+        /* Styr upp raderna med listobjekt + soptunna */
+        .admin-item-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0;
+        }
+
+        .admin-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        /* Den lilla röda ta-bort-knappen */
+        .btn-delete-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .btn-delete-icon:hover {
+            background: #fee2e2; /* Ljusröd bakgrund vid hover */
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
@@ -299,7 +493,6 @@
         <!-- SEKTION: ATT GÖRA -->
         <h2>Aktuella sysslor 📋</h2>
         <ul class="chore-list">
-            {% set oavklarade_finns = false %}
             {% for chore in chores %}
                 {% if not chore.is_completed %}
                     <li class="chore-item">
@@ -328,36 +521,173 @@
             {% endfor %}
         </ul>
 
-        <!-- SEKTION: HISTORIK -->
-        <div class="history-section">
-            <h2>Avklarade sysslor 📜</h2>
-            <ul class="chore-list">
-                {% for chore in chores %}
-                    {% if chore.is_completed %}
-                        <li class="chore-item">
-                            <div class="chore-main">
-                                <span class="chore-title">{{ chore.title }}</span>
-                                {% if chore.users and chore.users.name %}
-                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Fixat av: {{ chore.users.name }}</span>
-                                {% endif %}
+       
+        <!-- SEKTION: MASKINER & ZONER (PERMANENTA SYSSLOR) -->
+        <h2>Maskiner & Zoner ⚙️</h2>
+        <div class="perm-sections-container">
+            {% for chore in permanent_chores %}
+                
+                <!-- DROPDOWN / ACCORDION FÖR VARJE HUVUDSYSSLA -->
+                <details class="chore-dropdown" {% if loop.first %}open{% endif %}>
+                    <summary class="dropdown-header">
+                        <span class="dropdown-title">{{ chore.name or chore.title }}</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </summary>
+                    
+                    <div class="dropdown-content">
+                        {% if chore.system_type == 'cycle' %}
+                            <!-- MASKIN-KORT INUTI DROPDOWN -->
+                            <div class="perm-card">
+                                <div class="perm-card-header">
+                                    <span class="chore-title">Status för {{ chore.name or chore.title }}</span>
+                                    <span class="status-badge {{ chore.current_status }}">
+                                        {% if chore.current_status == 'dirty' %} Smutsig
+                                        {% elif chore.current_status == 'running' %} Körs ({{ chore.remaining_minutes }}m kvar)
+                                        {% elif chore.current_status == 'ready' %} Klar / Ska tömmas
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="chore-actions">
+                                    {% if chore.current_status == 'dirty' %}
+                                        <form action="/perm/start_machine/{{ chore.id }}" method="POST" class="perm-action-form">
+                                            <select name="program_id" class="perm-select" required>
+                                                <option value="">Välj program...</option>
+                                                {% for prog in chore.chore_programs %}
+                                                    <option value="{{ prog.id }}">{{ prog.name }} ({{ prog.duration_minutes }} min)</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn-btn btn-primary">Starta</button>
+                                        </form>
+                                    {% elif chore.current_status == 'ready' %}
+                                        <form action="/perm/reset_machine/{{ chore.id }}" method="POST" style="width: 100%;">
+                                            <button type="submit" class="btn-btn btn-warning">Tömd & nollställd 🧺</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
                             </div>
-                            
-                            <div class="chore-actions">
-                                <span class="check-mark">✓</span>
-                                
-                                {% if session["role"] == "admin" %}
-                                    <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;" onsubmit="return confirm('Vill du radera ur historiken?');">
-                                        <button type="submit" class="btn-icon-danger" style="padding: 4px 8px; font-size: 0.8rem;">🗑️</button>
-                                    </form>
-                                {% endif %}
+                        {% else %}
+                            <!-- ZON-KORT INUTI DROPDOWN -->
+                            <div class="perm-grid">
+                                {% for zone in chore.chore_zones %}
+                                    <div class="perm-card">
+                                        <div class="perm-card-header">
+                                            <span class="chore-title">{{ chore.name or chore.title }} {{ zone.name }}</span>
+                                            <span class="status-badge zone-status">
+                                                Städad: {{ zone.last_cleared_at[:10] if zone.last_cleared_at else 'Aldrig' }}
+                                            </span>
+                                        </div>
+                                        <div class="chore-actions">
+                                            <form action="/perm/reset_zone/{{ zone.id }}" method="POST" style="width: 100%;">
+                                                <button type="submit" class="btn-btn btn-success" style="width: 100%;">Markera som avklarad ✨</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p style="font-size: 0.9rem; color: var(--text-muted); padding: 10px;">Inga zoner tillagda ännu.</p>
+                                {% endfor %}
                             </div>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
+                        {% endif %}
+                    </div>
+                </details>
+
+            {% endfor %}
         </div>
+
+        <!-- ADMIN INSTÄLLNINGSKNAPP -->
+        {% if session.get('role') == 'admin' %}
+            <button id="openAdminModal" class="btn-admin-settings">⚙️ Hantera Maskiner & Zoner</button>
+        {% endif %}
 
     </div>
 
+    <!-- ADMIN INSTÄLLNINGAR MODAL -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Inställningar för Hubben</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            
+            <!-- Flex-container för att hålla allt samlat inuti modalen -->
+            <div class="admin-modal-scroll-area">
+                {% for chore in permanent_chores %}
+                    <div class="admin-chore-section">
+                        <h3>{{ chore.name or chore.title }}</h3>
+                        
+                        {% if chore.system_type == 'cycle' %}
+                            <h4>Befintliga program:</h4>
+                            <ul class="admin-item-list">
+                                {% for prog in chore.chore_programs %}
+                                    <li class="admin-item-row">
+                                        <span>{{ prog.name }} ({{ prog.duration_minutes }} min)</span>
+                                        <!-- Form för att ta bort program -->
+                                        <form action="/perm/delete_program/{{ prog.id }}" method="POST" onsubmit="return confirm('Är du säker på att du vill ta bort programmet?');">
+                                            <button type="submit" class="btn-delete-icon">🗑️</button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            
+                            <!-- Formuläret är nu helt låst inuti kortets ramar -->
+                            <div class="admin-form-wrapper">
+                                <form action="/perm/add_program/{{ chore.id }}" method="POST" class="admin-form">
+                                    <input type="text" name="name" placeholder="T.ex. Snabbprogram" required>
+                                    <input type="number" name="duration_minutes" placeholder="Min" style="max-width: 65px;" required>
+                                    <button type="submit" class="btn-btn btn-primary btn-small">Lägg till</button>
+                                </form>
+                            </div>
+
+                        {% else %}
+                            <h4>Underkategorier / Zoner:</h4>
+                            <ul class="admin-item-list">
+                                {% for zone in chore.chore_zones %}
+                                    <li class="admin-item-row">
+                                        <span>{{ zone.name }}</span>
+                                        <!-- Form för att ta bort zon -->
+                                        <form action="/perm/delete_zone/{{ zone.id }}" method="POST" onsubmit="return confirm('Är du säker på att du vill ta bort zonen?');">
+                                            <button type="submit" class="btn-delete-icon">🗑️</button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            
+                            <!-- Formuläret är nu helt låst inuti kortets ramar -->
+                            <div class="admin-form-wrapper">
+                                <form action="/perm/add_zone/{{ chore.id }}" method="POST" class="admin-form">
+                                    <input type="text" name="name" placeholder="T.ex. Kök eller Vardagsrum" required>
+                                    <button type="submit" class="btn-btn btn-primary btn-small">Lägg till</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LOGIK (JAVASCRIPT) -->
+    <script>
+        const modal = document.getElementById("adminModal");
+        const btn = document.getElementById("openAdminModal");
+        const span = document.getElementsByClassName("close-modal")[0];
+
+        if (btn) {
+            btn.onclick = function() {
+                modal.style.display = "block";
+            }
+        }
+
+        if (span) {
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
