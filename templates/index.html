@@ -3,79 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hushållshubben</title>
-    <!-- Vi lägger till enkel styling direkt så det ser okej ut från start -->
+    <title>{{ family_info.name }} - Hushållshubben</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
-        .chore-list { list-style: none; padding: 0; }
-        .chore-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
-        .completed { text-decoration: line-through; color: #888; }
-        input[type="text"] { padding: 8px; width: 70%; }
-        button { padding: 8px 15px; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px 10px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Header & Profil-zon */
+        .header-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin: 0 0 4px 0;
+            color: #0f172a;
+        }
+
+        .invite-badge {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .user-badge {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .role-tag {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .logout-link {
+            color: var(--danger);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        /* Form för nya sysslor */
+        .add-form {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media(min-width: 480px) {
+            .add-form {
+                flex-direction: row;
+            }
+            .add-form input { flex: 2; }
+            .add-form select { flex: 1; }
+        }
+
+        .add-form input, .add-form select, .add-form button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.95rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .add-form input:focus, .add-form select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .add-form button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .add-form button:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Listor & Element */
+        h2 {
+            font-size: 1.2rem;
+            margin: 0 0 12px 0;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chore-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .chore-item {
+            background: var(--bg-card);
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #f1f5f9;
+            gap: 15px;
+        }
+
+        .chore-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .chore-title {
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .chore-assignee {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .chore-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover { background: var(--success-hover); }
+
+        .btn-icon-danger {
+            background: #fef2f2;
+            color: var(--danger);
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-icon-danger:hover {
+            background: #fee2e2;
+            color: var(--danger-hover);
+        }
+
+        /* Historik-specifikt */
+        .history-section {
+            opacity: 0.7;
+        }
+
+        .history-section .chore-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .history-section .chore-item {
+            background: #f8fafc;
+        }
+
+        .check-mark {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px;">
-        <div>
-            <h1>{{ family_info.name }} 🧹</h1>
-            <p style="margin: 0; color: #555;">Inbjudningskod för familjen: <strong>{{ family_info.invite_code }}</strong></p>
+
+    <div class="container">
+        
+        <!-- HEADER KORT -->
+        <div class="header-card">
+            <div class="header-top">
+                <div>
+                    <h1>{{ family_info.name }} 🏡</h1>
+                    <div style="margin-top: 4px;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Kod: </span>
+                        <span class="invite-badge">{{ family_info.invite_code }}</span>
+                    </div>
+                </div>
+                <div class="user-badge">
+                    <div style="font-weight: 500;">{{ session["user_name"] }}</div>
+                    <div><span class="role-tag">{{ session["role"] }}</span></div>
+                    <a href="/logout" class="logout-link">Logga ut</a>
+                </div>
+            </div>
         </div>
-        <div style="text-align: right;">
-            <p style="margin: 0;">Inloggad som: <strong>{{ session["user_name"] }}</strong> 
-               (<span style="font-size: 0.9em; color:#007bff;">{{ session["role"] }}</span>)</p>
-            <a href="/logout" style="color: red; font-size: 0.9em;">Logga ut</a>
+
+        <!-- FORMULÄR FÖR ATT LÄGGA TILL SYSSLA -->
+        <form action="/add" method="POST" class="add-form">
+            <input type="text" name="title" placeholder="Vad behöver göras?" required>
+            <select name="assigned_to">
+                <option value="">Gemensam 👥</option>
+                {% for user in users %}
+                    <option value="{{ user.id }}" {% if user.id == session["user_id"] %}selected{% endif %}>
+                        {{ user.name }} {% if user.id == session["user_id"] %}(Mig){% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Lägg till</button>
+        </form>
+
+        <!-- SEKTION: ATT GÖRA -->
+        <h2>Aktuella sysslor 📋</h2>
+        <ul class="chore-list">
+            {% set oavklarade_finns = false %}
+            {% for chore in chores %}
+                {% if not chore.is_completed %}
+                    <li class="chore-item">
+                        <div class="chore-main">
+                            <span class="chore-title">{{ chore.title }}</span>
+                            {% if chore.users and chore.users.name %}
+                                <span class="chore-assignee">👤 {{ chore.users.name }}</span>
+                            {% else %}
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">👥 Alla</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="chore-actions">
+                            <form action="/complete/{{ chore.id }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn-btn btn-success">Klar! 👍</button>
+                            </form>
+
+                            {% if session["role"] == "admin" %}
+                                <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;" onsubmit="return confirm('Vill du ta bort sysslan permanent?');">
+                                    <button type="submit" class="btn-icon-danger">🗑️</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <!-- SEKTION: HISTORIK -->
+        <div class="history-section">
+            <h2>Avklarade sysslor 📜</h2>
+            <ul class="chore-list">
+                {% for chore in chores %}
+                    {% if chore.is_completed %}
+                        <li class="chore-item">
+                            <div class="chore-main">
+                                <span class="chore-title">{{ chore.title }}</span>
+                                {% if chore.users and chore.users.name %}
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Fixat av: {{ chore.users.name }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="chore-actions">
+                                <span class="check-mark">✓</span>
+                                
+                                {% if session["role"] == "admin" %}
+                                    <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;" onsubmit="return confirm('Vill du radera ur historiken?');">
+                                        <button type="submit" class="btn-icon-danger" style="padding: 4px 8px; font-size: 0.8rem;">🗑️</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
+
     </div>
 
-    <h2 style="margin-top: 20px;">Sysslor live från Supabase:</h2>
-
-    <!-- Formulär för att lägga till en syssla -->
-    <form action="/add" method="POST" style="margin-bottom: 20px;">
-        <input type="text" name="title" placeholder="T.ex. Dammsuga vardagsrummet" required>
-        <select name="assigned_to">
-            <option value="">Ingen specifik (Alla) 👥</option>
-            {% for user in users %}
-                <option value="{{ user.id }}">{{ user.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Lägg till</button>
-    </form>
-
-    <!-- Lista med sysslor -->
-    <ul class="chore-list">
-        {% for chore in chores %}
-            <li class="chore-item">
-                <span class="{% if chore.is_completed %}completed{% endif %}">
-                    <strong>{{ chore.title }}</strong> 
-                    {% if chore.users and chore.users.name %}
-                        <span style="color: #666; font-size: 0.9em; margin-left: 10px;">👤 {{ chore.users.name }}</span>
-                    {% else %}
-                        <span style="color: #999; font-size: 0.9em; margin-left: 10px;">👥 Alla</span>
-                    {% endif %}
-                </span>
-                
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    {% if chore.is_completed %}
-                        <span>✅</span>
-                    {% else %}
-                        <form action="/complete/{{ chore.id }}" method="POST" style="display: inline;">
-                            <button type="submit" style="padding: 2px 8px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                Klar! 👍
-                            </button>
-                        </form>
-                    {% endif %}
-
-                    <!-- RADERA-KNAPP: Visas endast om inloggad användare har rollen 'admin' -->
-                    {% if session["role"] == "admin" %}
-                        <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;" onsubmit="return confirm('Är du säker på att du vill ta bort den här sysslan permanent?');">
-                            <button type="submit" style="padding: 2px 6px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
-                                🗑️ Radera
-                            </button>
-                        </form>
-                    {% endif %}
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
 </body>
 </html>

@@ -76,7 +76,7 @@ def create_family_and_make_admin(family_name, user_id):
     
     # 1. Skapa familjen
     family_resp = supabase.table("families").insert({
-        "name": family_name,
+        "family_name": family_name,
         "invite_code": code
     }).execute()
     
