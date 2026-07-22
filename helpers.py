@@ -110,3 +110,98 @@ def join_family_with_code(invite_code, user_id):
     }).eq("id", user_id).execute()
     
     return True
+
+from supabase import create_client
+import os
+
+# Initiera din Supabase-klient här (eller importera den om du redan har den i helpers)
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_key = os.environ.get("SUPABASE_KEY")
+supabase = create_client(supabase_url, supabase_key)
+
+def setup_base_chores(family_id):
+    """
+    Skapar automatiskt de 4 bassyslorna med standardkonfigurationer
+    för en nyregistrerad familj.
+    """
+    try:
+        # ==========================================
+        # 1. CYKELSYSTEMET (Diskmaskin & Tvättmaskin)
+        # ==========================================
+        
+        # Skapa Diskmaskin
+        dish_chore = supabase.table("permanent_chores").insert({
+            "family_id": family_id,
+            "title": "Diskmaskin",
+            "system_type": "cycle",
+            "current_status": "dirty"
+        }).execute()
+        
+        if dish_chore.data:
+            dish_id = dish_chore.data[0]["id"]
+            # Lägg till standardprogram för disk
+            supabase.table("chore_programs").insert([
+                {"chore_id": dish_id, "name": "Eco 45°", "duration_minutes": 160},
+                {"chore_id": dish_id, "name": "Snabb 60°", "duration_minutes": 30},
+                {"chore_id": dish_id, "name": "Intensiv 70°", "duration_minutes": 140}
+            ]).execute()
+
+        # Skapa Tvättmaskin
+        wash_chore = supabase.table("permanent_chores").insert({
+            "family_id": family_id,
+            "title": "Tvättmaskin",
+            "system_type": "cycle",
+            "current_status": "dirty"
+        }).execute()
+        
+        if wash_chore.data:
+            wash_id = wash_chore.data[0]["id"]
+            # Lägg till standardprogram för tvätt
+            supabase.table("chore_programs").insert([
+                {"chore_id": wash_id, "name": "Bomull 40°", "duration_minutes": 120},
+                {"chore_id": wash_id, "name": "Syntet 30°", "duration_minutes": 90},
+                {"chore_id": wash_id, "name": "Snabbspolning", "duration_minutes": 15}
+            ]).execute()
+
+        # ==========================================
+        # 2. INTERVALLSYSTEMET (Dammsugning & Sopor)
+        # ==========================================
+        
+        # Skapa Dammsugning
+        vacuum_chore = supabase.table("permanent_chores").insert({
+            "family_id": family_id,
+            "title": "Dammsugning",
+            "system_type": "interval",
+            "current_status": "active"
+        }).execute()
+        
+        if vacuum_chore.data:
+            vacuum_id = vacuum_chore.data[0]["id"]
+            # Lägg till standardrum
+            supabase.table("chore_zones").insert([
+                {"chore_id": vacuum_id, "name": "Kök"},
+                {"chore_id": vacuum_id, "name": "Vardagsrum"},
+                {"chore_id": vacuum_id, "name": "Hall/Entré"}
+            ]).execute()
+
+        # Skapa Slänga sopor
+        trash_chore = supabase.table("permanent_chores").insert({
+            "family_id": family_id,
+            "title": "Slänga sopor",
+            "system_type": "interval",
+            "current_status": "active"
+        }).execute()
+        
+        if trash_chore.data:
+            trash_id = trash_chore.data[0]["id"]
+            # Lägg till olika sorteringar
+            supabase.table("chore_zones").insert([
+                {"chore_id": trash_id, "name": "Restavfall"},
+                {"chore_id": trash_id, "name": "Matavfall/Kompost"},
+                {"chore_id": trash_id, "name": "Plast/Kartong återvinning"}
+            ]).execute()
+            
+        return True
+    except Exception as e:
+        print(f"Fel vid uppstart av bassysslor: {e}")
+        return False
