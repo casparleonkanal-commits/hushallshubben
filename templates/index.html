@@ -671,6 +671,20 @@
         const btn = document.getElementById("openAdminModal");
         const span = document.getElementsByClassName("close-modal")[0];
 
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('adminModal') === 'true') {
+            modal.style.display = "block";
+
+            urlParams.delete('adminModal');
+    
+    
+            const newQuery = urlParams.toString() ? '?' + urlParams.toString() : '';
+            const newUrl = window.location.pathname + newQuery + window.location.hash;
+    
+            window.history.replaceState(null, '', newUrl);
+
+        }
+
         if (btn) {
             btn.onclick = function() {
                 modal.style.display = "block";

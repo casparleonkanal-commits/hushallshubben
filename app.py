@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, jsonify, render_template, request, redirect, session, url_for
 from helpers import (
     add_chore, get_chores_by_family, complete_chore, get_users_by_family,
     register_user, create_family_and_make_admin, join_family_with_code, setup_base_chores,
@@ -180,13 +180,12 @@ def add_zone(chore_id):
 def delete_program(program_id):
     # Ändra till ditt tabellnamn om det heter något annat
     supabase.table('chore_programs').delete().eq('id', program_id).execute()
-    return redirect(url_for('index'))
-
+    return redirect(url_for('index', adminModal='true'))
 @app.route('/perm/delete_zone/<int:zone_id>', methods=['POST'])
 def delete_zone(zone_id):
     # Ändra till ditt tabellnamn om det heter något annat
     supabase.table('chore_zones').delete().eq('id', zone_id).execute()
-    return redirect(url_for('index'))
+    return redirect(url_for('index', adminModal='true'))
 
 @app.route("/delete/<int:chore_id>", methods=["POST"])
 def delete_chore_route(chore_id):
