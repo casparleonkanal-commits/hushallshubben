@@ -464,11 +464,8 @@
         <!-- NAVIGATION -->
         <nav class="navbar navbar-expand-lg fixed-bottom">
             <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#myMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="myMenu">
-                    <ul class="navbar-nav w-100">
+                <div class="w-100" id="myMenu">
+                    <ul class="navbar-nav w-100 d-flex flex-row">
                         <li class="nav-item flex-fill text-center"><a class="nav-link" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='icons/home.png') }}" alt="Home" width="24" height="24"></a></li>
                         <li class="nav-item flex-fill text-center"><a class="nav-link" href="{{ url_for('tasks') }}"><img src="{{ url_for('static', filename='icons/tasks.png') }}" alt="Tasks" width="24" height="24"></a></li>
                         <li class="nav-item flex-fill text-center"><a class="nav-link active" href="{{ url_for('stats') }}"><img src="{{ url_for('static', filename='icons/stats.png') }}" alt="Stats" width="24" height="24"></a></li>
