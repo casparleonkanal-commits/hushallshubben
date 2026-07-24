@@ -7,6 +7,7 @@ from helpers import (
     supabase
 )
 from werkzeug.security import check_password_hash
+from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 from dotenv import load_dotenv
 
@@ -14,6 +15,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Hemlig nyckel för kryptering av sessionscookies
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "en-super-hemlig-test-nyckel-123")
@@ -30,6 +33,16 @@ def index():
     if not session.get("family_id"):
         return redirect("/onboarding")
         
+    # Hämta familjeinfo så du kan visa t.ex. "Familjen Svenssons Hem"
+    chores = get_chores_by_family(session["family_id"])
+    users = get_users_by_family(session["family_id"])
+    fam_res = supabase.table("families").select("*").eq("id", session["family_id"]).execute()
+    family_info = fam_res.data[0] if fam_res.data else None
+                    
+    return render_template("index.html", family_info=family_info, chores=chores, users=users)
+
+@app.route("/tasks")
+def tasks():
     chores = get_chores_by_family(session["family_id"])
     users = get_users_by_family(session["family_id"])
     
@@ -37,7 +50,7 @@ def index():
     family_info = fam_res.data[0] if fam_res.data else None
     
     # Hämta de permanenta sysslorna med program och zoner
-   # Använd parentes runt hela uttrycket istället för backslash
+    # Använd parentes runt hela uttrycket istället för backslash
     perm_res = (
         supabase.table("permanent_chores")
         .select("*, chore_programs!chore_programs_chore_id_fkey(*), chore_zones(*)")
@@ -53,15 +66,15 @@ def index():
         if chore["system_type"] == "cycle" and chore["current_status"] == "running":
             # Hitta vilket program som körs
             active_prog = next((p for p in chore["chore_programs"] if p["id"] == chore["active_program_id"]), None)
-            
+    
             if active_prog and chore["timer_started_at"]:
                 # Gör om strängen från Supabase till ett datetime-objekt i UTC
                 started_at = datetime.fromisoformat(chore["timer_started_at"].replace("Z", "+00:00"))
-                
+    
                 # Räkna ut hur många minuter maskinen har kört
                 elapsed_minutes = (now - started_at).total_seconds() / 60
                 duration = active_prog["duration_minutes"]
-                
+    
                 if elapsed_minutes >= duration:
                     # Tiden har gått ut! Uppdatera statusen direkt i databasen och i vårt lokala objekt
                     supabase.table("permanent_chores").update({"current_status": "ready"}).eq("id", chore["id"]).execute()
@@ -70,15 +83,34 @@ def index():
                 else:
                     # Maskinen körs fortfarande, spara hur många minuter som är kvar
                     chore["remaining_minutes"] = int(duration - elapsed_minutes)
-                    
     return render_template(
-        "index.html", 
-        chores=chores, 
-        users=users, 
-        family_info=family_info,
-        permanent_chores=permanent_chores
-    )
+            'tasks.html', chores=chores, 
+            users=users, 
+            family_info=family_info,
+            permanent_chores=permanent_chores
+            )
 
+@app.route("/stats")
+def stats():
+    if "user_id" not in session: return redirect("/login") # Kom ihåg login-skydd!
+    
+    fam_res = supabase.table("families").select("*").eq("id", session["family_id"]).execute()
+    family_info = fam_res.data[0] if fam_res.data else None
+    
+    return render_template('stats.html', users=get_users_by_family(session["family_id"]), family_info=family_info)
+
+@app.route("/settings")
+def settings():
+    if "user_id" not in session: return redirect("/login") # Kom ihåg login-skydd!
+    
+    # Hämta nuvarande info så att formulären kan vara förifyllda med nuvarande värden
+    user_res = supabase.table("users").select("*").eq("id", session["user_id"]).execute()
+    current_user = user_res.data[0] if user_res.data else None
+    
+    fam_res = supabase.table("families").select("*").eq("id", session["family_id"]).execute()
+    family_info = fam_res.data[0] if fam_res.data else None
+
+    return render_template('settings.html', current_user=current_user, family_info=family_info)
 
 @app.route("/add", methods=["POST"])
 def add():
@@ -91,7 +123,7 @@ def add():
     if title:
         add_chore(title, session["family_id"], assigned_to)
         
-    return redirect("/")
+    return redirect("/tasks")
 
 
 @app.route("/complete/<int:chore_id>", methods=["POST"])
@@ -166,7 +198,7 @@ def add_program(chore_id):
             "duration_minutes": int(duration)
         }).execute()
         
-    return redirect("/")
+    return redirect(url_for('tasks', adminModal='true'))
 
 
 @app.route("/perm/add_zone/<int:chore_id>", methods=["POST"])
@@ -181,17 +213,17 @@ def add_zone(chore_id):
             "name": name
         }).execute()
         
-    return redirect("/")
+    return redirect(url_for('tasks', adminModal='true'))
 @app.route('/perm/delete_program/<int:program_id>', methods=['POST'])
 def delete_program(program_id):
     # Ändra till ditt tabellnamn om det heter något annat
     supabase.table('chore_programs').delete().eq('id', program_id).execute()
-    return redirect(url_for('index', adminModal='true'))
+    return redirect(url_for('tasks', adminModal='true'))
 @app.route('/perm/delete_zone/<int:zone_id>', methods=['POST'])
 def delete_zone(zone_id):
     # Ändra till ditt tabellnamn om det heter något annat
     supabase.table('chore_zones').delete().eq('id', zone_id).execute()
-    return redirect(url_for('index', adminModal='true'))
+    return redirect(url_for('tasks', adminModal='true'))
 
 @app.route("/delete/<int:chore_id>", methods=["POST"])
 def delete_chore_route(chore_id):

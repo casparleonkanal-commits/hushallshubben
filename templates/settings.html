@@ -1,7 +1,6 @@
 <!-- Coded entirely in HTML -->
 <!DOCTYPE html>
 <html lang="sv">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +8,9 @@
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#4f46e5">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    
     <!-- iOS support (gör att adressfältet försvinner på iPhone) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -67,7 +63,7 @@
             background: var(--bg-card);
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
             margin-bottom: 20px;
         }
 
@@ -122,7 +118,7 @@
             background: var(--bg-card);
             padding: 16px;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 24px;
             display: flex;
             flex-direction: column;
@@ -133,20 +129,11 @@
             .add-form {
                 flex-direction: row;
             }
-
-            .add-form input {
-                flex: 2;
-            }
-
-            .add-form select {
-                flex: 1;
-            }
+            .add-form input { flex: 2; }
+            .add-form select { flex: 1; }
         }
 
-        .add-form input,
-        .add-form select,
-        .perm-select,
-        .admin-form input {
+        .add-form input, .add-form select, .perm-select, .admin-form input {
             padding: 10px 14px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
@@ -155,9 +142,7 @@
             font-family: inherit;
         }
 
-        .add-form input:focus,
-        .add-form select:focus,
-        .perm-select:focus {
+        .add-form input:focus, .add-form select:focus, .perm-select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
@@ -189,20 +174,18 @@
             gap: 8px;
         }
 
-        .chore-list,
-        .perm-grid {
+        .chore-list, .perm-grid {
             list-style: none;
             padding: 0;
             margin: 0 0 30px 0;
         }
 
-        .chore-item,
-        .perm-card {
+        .chore-item, .perm-card {
             background: var(--bg-card);
             padding: 14px 16px;
             border-radius: 10px;
             margin-bottom: 8px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
             border: 1px solid #f1f5f9;
         }
 
@@ -236,8 +219,7 @@
             font-weight: 500;
         }
 
-        .chore-actions,
-        .perm-card-header {
+        .chore-actions, .perm-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -275,10 +257,7 @@
             background: var(--success);
             color: white;
         }
-
-        .btn-success:hover {
-            background: var(--success-hover);
-        }
+        .btn-success:hover { background: var(--success-hover); }
 
         .btn-warning {
             background: var(--warning);
@@ -290,10 +269,7 @@
             background: var(--primary);
             color: white;
         }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
+        .btn-primary:hover { background: var(--primary-hover); }
 
         .btn-icon-danger {
             background: #fef2f2;
@@ -303,7 +279,6 @@
             border: none;
             cursor: pointer;
         }
-
         .btn-icon-danger:hover {
             background: #fee2e2;
             color: var(--danger-hover);
@@ -317,41 +292,15 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-
-        .status-badge.dirty {
-            background: #fef2f2;
-            color: #b91c1c;
-        }
-
-        .status-badge.running {
-            background: #fffbeb;
-            color: #b45309;
-            animation: pulse 2s infinite;
-        }
-
-        .status-badge.ready {
-            background: #ecfdf5;
-            color: #047857;
-        }
-
-        .status-badge.zone-status {
-            background: #f1f5f9;
-            color: #475569;
-            text-transform: none;
-        }
+        .status-badge.dirty { background: #fef2f2; color: #b91c1c; }
+        .status-badge.running { background: #fffbeb; color: #b45309; animation: pulse 2s infinite; }
+        .status-badge.ready { background: #ecfdf5; color: #047857; }
+        .status-badge.zone-status { background: #f1f5f9; color: #475569; text-transform: none; }
 
         @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
         /* Admin Inställningsknapp */
@@ -371,10 +320,7 @@
             font-size: 0.95rem;
             transition: background 0.2s;
         }
-
-        .btn-admin-settings:hover {
-            background-color: #334155;
-        }
+        .btn-admin-settings:hover { background-color: #334155; }
 
         /* MODAL (Popup-fönster) */
         .modal {
@@ -410,10 +356,7 @@
             margin-bottom: 16px;
         }
 
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.3rem;
-        }
+        .modal-header h2 { margin: 0; font-size: 1.3rem; }
 
         .close-modal {
             color: #94a3b8;
@@ -422,10 +365,7 @@
             cursor: pointer;
             line-height: 1;
         }
-
-        .close-modal:hover {
-            color: #475569;
-        }
+        .close-modal:hover { color: #475569; }
 
         .admin-chore-section {
             background: #f8fafc;
@@ -434,19 +374,9 @@
             margin-bottom: 14px;
             border: 1px solid var(--border-color);
         }
-
-        .admin-chore-section h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.05rem;
-            color: #1e293b;
-        }
-
-        .admin-chore-section h4 {
-            margin: 10px 0 4px 0;
-            font-size: 0.9rem;
-            color: #64748b;
-        }
-
+        .admin-chore-section h3 { margin: 0 0 8px 0; font-size: 1.05rem; color: #1e293b; }
+        .admin-chore-section h4 { margin: 10px 0 4px 0; font-size: 0.9rem; color: #64748b; }
+        
         .admin-chore-section ul {
             margin: 0 0 10px 0;
             padding-left: 20px;
@@ -459,13 +389,11 @@
             gap: 8px;
             margin-top: 8px;
         }
-
         .admin-form input {
             padding: 6px 10px;
             font-size: 0.85rem;
             flex: 1;
         }
-
         .btn-small {
             padding: 6px 12px;
             font-size: 0.85rem;
@@ -473,12 +401,12 @@
 
         /* Säkerställer att inget flyter utanför */
         .admin-modal-scroll-area {
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+             max-height: 500px; 
+             overflow-y: auto; 
+             padding-right: 5px;
+             display: flex;
+             flex-direction: column;
+             gap: 15px;
         }
 
         /* Container för formulären inuti korten */
@@ -520,28 +448,19 @@
         }
 
         .btn-delete-icon:hover {
-            background: #fee2e2;
-            /* Ljusröd bakgrund vid hover */
+            background: #fee2e2; /* Ljusröd bakgrund vid hover */
         }
 
         @keyframes slideDown {
-            from {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
-
 <body>
 
     <div class="container">
-
+        
         <!-- NAVIGATION -->
         <nav class="navbar navbar-expand-lg fixed-bottom">
             <div class="container-fluid">
@@ -550,130 +469,40 @@
                 </button>
                 <div class="collapse navbar-collapse" id="myMenu">
                     <ul class="navbar-nav w-100">
-                        <li class="nav-item flex-fill text-center"><a class="nav-link active"
-                                href="{{ url_for('index') }}"><img
-                                    src="{{ url_for('static', filename='icons/home.png') }}" alt="Home" width="24"
-                                    height="24"></a></li>
-                        <li class="nav-item flex-fill text-center"><a class="nav-link"
-                                href="{{ url_for('tasks') }}"><img
-                                    src="{{ url_for('static', filename='icons/tasks.png') }}" alt="Tasks" width="24"
-                                    height="24"></a></li>
-                        <li class="nav-item flex-fill text-center"><a class="nav-link"
-                                href="{{ url_for('stats') }}"><img
-                                    src="{{ url_for('static', filename='icons/stats.png') }}" alt="Stats" width="24"
-                                    height="24"></a></li>
-                        <li class="nav-item flex-fill text-center"><a class="nav-link"
-                                href="{{ url_for('settings') }}"><img
-                                    src="{{ url_for('static', filename='icons/settings.png') }}" alt="Settings"
-                                    width="24" height="24"></a></li>
+                        <li class="nav-item flex-fill text-center"><a class="nav-link" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='icons/home.png') }}" alt="Home" width="24" height="24"></a></li>
+                        <li class="nav-item flex-fill text-center"><a class="nav-link" href="{{ url_for('tasks') }}"><img src="{{ url_for('static', filename='icons/tasks.png') }}" alt="Tasks" width="24" height="24"></a></li>
+                        <li class="nav-item flex-fill text-center"><a class="nav-link" href="{{ url_for('stats') }}"><img src="{{ url_for('static', filename='icons/stats.png') }}" alt="Stats" width="24" height="24"></a></li>
+                        <li class="nav-item flex-fill text-center"><a class="nav-link active" href="{{ url_for('settings') }}"><img src="{{ url_for('static', filename='icons/settings.png') }}" alt="Settings" width="24" height="24"></a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
 
-
-
-
-        <h1>Hej! {{ session["user_name"] }}</h1>
-        <h2>Här är dina aktuella sysslor 📋</h2>
-
-        <!-- SEKTION: ATT GÖRA -->
-        <ul class="chore-list">
-            {% for chore in chores %}
-            {% if (chore.users and chore.assigned_to == session["user_id"]) or chore.users is none %}
-
-
-            <li class="chore-item" {% if chore.is_completed %}style="opacity: 0.6;" {% endif %}>
-                <div class="chore-main">
-                    {# Om sysslan är klar blir texten genomstruken #}
-                    <span class="chore-title" {% if chore.is_completed %}style="text-decoration: line-through;" {% endif
-                        %}>
-                        {{ chore.title }}
-                    </span>
-
-                    <span class="chore-assignee">👤 {{ chore.users.name }}</span>
-                </div>
-
-                <div class="chore-actions">
-                    {# Visa bara "Klar!"-knappen om sysslan faktiskt INTE är klar ännu #}
-                    {% if not chore.is_completed %}
-                    <form action="/complete/{{ chore.id }}" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-success">Klar! 👍</button>
-                    </form>
-                    {% else %}
-                    <span class="badge bg-secondary">Slutförd</span>
-                    {% endif %}
-
-                    {% if session["role"] == "admin" %}
-                    <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;"
-                        onsubmit="return confirm('Vill du ta bort sysslan permanent?');">
-                        <button type="submit" class="btn-icon-danger">🗑️</button>
-                    </form>
-                    {% endif %}
-                </div>
-            </li>
-
-            {% endif %}
-            {% endfor %}
-        </ul>
-
-        {% if session["role"] == "admin" %}
-        <h2>Alla hemmets sysslor</h2>
-
         
-        {% for user in users %}
-        {% if user.id != session["user_id"] %}
-
-        
-        <h3 class="admin-user-chore-heading">{{ user.name }}`s Sysslor</h3>
-
-        <ul class="chore-list">
-           
-            {% for chore in chores %}
-            {% if (chore.users and chore.assigned_to == session["user_id"]) or chore.users is none %}
-
-            <li class="chore-item" {% if chore.is_completed %}style="opacity: 0.6;" {% endif %}>
-                <div class="chore-main">
-                    <span class="chore-title" {% if chore.is_completed %}style="text-decoration: line-through;" {% endif
-                        %}>
-                        {{ chore.title }}
-                    </span>
-                    <span class="chore-assignee">👤 {{ chore.users.name }}</span>
+        <!-- HEADER KORT -->
+        <div class="header-card">
+            <div class="header-top">
+                <div>
+                    <h1>{{ family_info.name }} 🏡</h1>
+                    <div style="margin-top: 4px;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Kod: </span>
+                        <span class="invite-badge">{{ family_info.invite_code }}</span>
+                    </div>
                 </div>
-
-                <div class="chore-actions">
-                    {% if not chore.is_completed %}
-                    <span class="badge bg-secondary">Ej klar</span>
-                    {% else %}
-                    <span class="badge bg-secondary">Slutförd</span>
-                    {% endif %}
-
-                    {# Admin kan alltid ta bort i denna vy #}
-                    <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;"
-                        onsubmit="return confirm('Vill du ta bort sysslan permanent?');">
-                        <button type="submit" class="btn-icon-danger">🗑️</button>
-                    </form>
+                <div class="user-badge">
+                    <div style="font-weight: 500;">{{ session["user_name"] }}</div>
+                    <div><span class="role-tag">{{ session["role"] }}</span></div>
+                    <a href="/logout" class="logout-link">Logga ut</a>
                 </div>
-            </li>
-
-            {% endif %}
-            {% endfor %}
-        </ul>
-
-        {% endif %}
-        {% endfor %}
-        {% endif %}
-
-
-
+            </div>
+        </div>
 
     </div>
 
     <!-- MODAL LOGIK (JAVASCRIPT) -->
     <script>
-
+        
     </script>
 </body>
-
 </html>
