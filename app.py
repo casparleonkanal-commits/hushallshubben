@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for
 from helpers import (
     add_chore, get_chores_by_family, complete_chore, get_users_by_family,
@@ -15,6 +17,7 @@ app = Flask(__name__)
 
 # Hemlig nyckel för kryptering av sessionscookies
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "en-super-hemlig-test-nyckel-123")
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 
 
 @app.route("/")
