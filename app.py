@@ -19,7 +19,10 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "en-super-hemlig-test-nyckel-123")
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 
-
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    
 @app.route("/")
 def index():
     if "user_id" not in session:
