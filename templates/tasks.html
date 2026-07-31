@@ -17,6 +17,26 @@
     <meta name="apple-mobile-web-app-title" content="Hushållshubben">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3061/3061331.png">
 
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function (OneSignal) {
+            await OneSignal.init({
+                appId: "7da1f29d-2b04-4a1b-adbf-f777ebc640c9",
+                safari_web_id: "web.onesignal.auto.02fb3e7d-913a-4c9d-837c-ed1a77b6978e",
+                notifyButton: {
+                    enable: true,
+                },
+            });
+
+            const currentUserId = "{{ session.get('user_id', '') }}";
+            if (currentUserId) {
+                await OneSignal.login(currentUserId);
+                console.log("Inloggad i OneSignal med ID: " + currentUserId);
+            }
+        });
+    </script>
+
     <script>
         // Registrera vår Service Worker
         if ('serviceWorker' in navigator) {
