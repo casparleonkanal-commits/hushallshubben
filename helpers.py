@@ -234,6 +234,7 @@ def setup_base_chores(family_id):
 
 import os
 import onesignal
+from onesignal.configuration import Configuration
 from onesignal.api import default_api
 from onesignal.model.notification import Notification
 
