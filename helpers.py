@@ -233,38 +233,48 @@ def setup_base_chores(family_id):
         return False
 
 import os
-from onesignal import OneSignal, notification
+import onesignal
+from onesignal.api import default_api
+from onesignal.model.notification import Notification
 
-def send_push_notification(message, target_user_id=None):
-    """Skickar en push-notis. Om target_user_id anges får bara den personen notisen, annars får alla den."""
-    
-    # Hämta nycklarna från Renders miljövariabler
+def send_push_notification(message, user_id=None):
+    """Skickar en push-notis via OneSignal API baserat på officiell dokumentation."""
     app_id = os.environ.get("ONESIGNAL_APP_ID")
     api_key = os.environ.get("ONESIGNAL_API_KEY")
     
     if not app_id or not api_key:
-        print("OneSignal-nycklar saknas i miljövariablerna!")
+        print("OneSignal-nycklar (app_id eller api_key) saknas i miljövariablerna!")
         return
 
-    # Initiera OneSignal-klienten
-    client = OneSignal(app_id, api_key)
-
-    # Skapa själva notis-innehållet
-    notification = notification(
-        contents={"en": message, "sv": message},
-        headings={"en": "Hushållshubben 🏠", "sv": "Hushållshubben 🏠"}
+    # 1. Konfigurera API-nyckeln (REST API Key)
+    configuration = onesignal.Configuration(
+        api_key=api_key
     )
 
-    if target_user_id:
-        # Skicka till en specifik användare (kräver att OneSignal.login anropats i JS)
-        notification.include_aliases = {"external_id": [str(target_user_id)]}
-        notification.target_channel = "push"
-    else:
-        # Skicka till alla som prenumererar
-        notification.included_segments = ["All Subscriptions"]
+    # 2. Öppna anslutningen med ApiClient
+    with onesignal.ApiClient(configuration) as api_client:
+        api_instance = default_api.DefaultApi(api_client)
 
-    try:
-        response = client.send_notification(notification)
-        print("Push-notis skickad utan problem:", response)
-    except Exception as e:
-        print("Kunde inte skicka push-notis:", e)
+        # 3. Skapa grundinställningarna för din notis
+        notification_args = {
+            "app_id": app_id,
+            "contents": {"en": message, "sv": message},
+            "headings": {"en": "Hushållshubben 🏠", "sv": "Hushållshubben 🏠"}
+        }
+
+        # 4. Sätt mottagare (Specifik användare eller alla)
+        if user_id:
+            notification_args["include_aliases"] = {"external_id": [str(user_id)]}
+            notification_args["target_channel"] = "push"
+        else:
+            notification_args["included_segments"] = ["Subscribed Users"]
+
+        # 5. Skapa Notification-objektet med rätt argument
+        notification = Notification(**notification_args)
+
+        try:
+            # 6. Skicka notisen via create_notification
+            response = api_instance.create_notification(notification)
+            print("Push-notis skickad utan problem:", response)
+        except Exception as e:
+            print("Kunde inte skicka push-notis via OneSignal:", e)
