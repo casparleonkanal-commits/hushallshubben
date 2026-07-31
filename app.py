@@ -126,7 +126,6 @@ def add():
     if assigned_to:
         # Skicka pushnotis till den användaren
         send_push_notification(
-            user_id=assigned_to,
             message=f"Du har fått sysslan: {title}"
         )
         
