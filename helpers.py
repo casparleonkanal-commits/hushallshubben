@@ -248,7 +248,7 @@ def send_push_notification(message, user_id=None):
 
     # 1. Konfigurera API-nyckeln (REST API Key)
     configuration = onesignal.Configuration(
-        api_key=api_key
+        rest_api_key=api_key
     )
 
     # 2. Öppna anslutningen med ApiClient
