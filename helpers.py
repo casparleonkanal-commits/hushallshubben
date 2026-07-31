@@ -253,7 +253,7 @@ def send_push_notification(message, user_id=None):
     )
 
     # 2. Öppna anslutningen med ApiClient
-    with onesignal.ApiClient(configuration) as api_client:
+    with onesignal.api_client.ApiClient(configuration) as api_client:
         api_instance = default_api.DefaultApi(api_client)
 
         # 3. Skapa grundinställningarna för din notis
