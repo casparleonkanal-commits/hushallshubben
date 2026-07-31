@@ -1,7 +1,10 @@
 import os
+from time import time
 from supabase import create_client, Client
 # Detta bibliotek hjälper till att läsa .env-filen automatiskt
 from dotenv import load_dotenv
+from supabase_auth import datetime
+from werkzeug.utils import secure_filename
 
 # Läs in miljövariablerna från .env
 load_dotenv()
@@ -30,11 +33,34 @@ def get_chores_by_family(family_id):
     response = supabase.table("chores").select("*, users(name)").eq("family_id", family_id).execute()
     return response.data
 
-def complete_chore(chore_id):
+def complete_chore(chore_id, image_file=None):
     """Markerar en syssla som klar (is_completed = True) i Supabase"""
-    data, count = supabase.table("chores").update({
-        "is_completed": True
-    }).eq("id", chore_id).execute()
+    update_data = {"is_completed": True}
+
+    # Om en bild har skickats med, ladda upp den till Supabase Storage
+    if image_file:
+        filename = secure_filename(image_file.filename)
+        
+        # Generera en unik tidsstämpel (t.ex. 1700000000)
+        timestamp = int(datetime.now().timestamp())
+        
+        # Lägg till tidsstämpeln i namnet: t.ex. "proofs/22_1700000000_bild.png"
+        storage_path = f"proofs/{chore_id}_{timestamp}_{filename}"
+        
+        file_bytes = image_file.read()
+        
+        supabase.storage.from_("chore-proofs").upload(
+            path=storage_path,
+            file=file_bytes,
+            file_options={"content-type": image_file.content_type}
+        )
+        
+        public_url = supabase.storage.from_("chore-proofs").get_public_url(storage_path)
+        update_data["proof_image_url"] = public_url
+
+    # Uppdatera raden i databasen
+    data, count = supabase.table("chores").update(update_data).eq("id", chore_id).execute()
+    
     print(f"Syssla ID {chore_id} är nu markerad som klar live!")
     return data
 

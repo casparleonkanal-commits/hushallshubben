@@ -545,7 +545,7 @@
         <!-- NAVIGATION -->
         <nav class="navbar navbar-expand-lg fixed-bottom">
             <div class="container-fluid">
-                
+
                 <div class="w-100" id="myMenu">
                     <ul class="navbar-nav w-100 d-flex flex-row">
                         <li class="nav-item flex-fill text-center"><a class="nav-link active"
@@ -596,7 +596,15 @@
                 <div class="chore-actions">
                     {# Visa bara "Klar!"-knappen om sysslan faktiskt INTE är klar ännu #}
                     {% if not chore.is_completed %}
-                    <form action="/complete/{{ chore.id }}" method="POST" style="display: inline;">
+                    <form action="/complete/{{ chore.id }}" method="POST" enctype="multipart/form-data"
+                        style="display: inline;">
+                        {% if session["role"] != "admin" %}
+                        <div class="mb-2">
+                            <label for="proof_image" class="form-label">Ladda upp bevis (bild):</label>
+                            <input type="file" class="form-control" id="proof_image" name="proof_image" accept="image/*"
+                                required>
+                        </div>
+                        {% endif %}
                         <button type="submit" class="btn btn-success">Klar! 👍</button>
                     </form>
                     {% else %}
@@ -619,17 +627,17 @@
         {% if session["role"] == "admin" %}
         <h2>Alla hemmets sysslor</h2>
 
-        
+
         {% for user in users %}
         {% if user.id != session["user_id"] %}
 
-        
+
         <h3 class="admin-user-chore-heading">{{ user.name }}`s Sysslor</h3>
 
         <ul class="chore-list">
-           
+
             {% for chore in chores %}
-            {% if (chore.users and chore.assigned_to == session["user_id"]) or chore.users is none %}
+            {% if (chore.assigned_to == user.id) or chore.users is none %}
 
             <li class="chore-item" {% if chore.is_completed %}style="opacity: 0.6;" {% endif %}>
                 <div class="chore-main">
@@ -644,15 +652,35 @@
                     {% if not chore.is_completed %}
                     <span class="badge bg-secondary">Ej klar</span>
                     {% else %}
-                    <span class="badge bg-secondary">Slutförd</span>
+                    <span class="badge bg-success">Väntar på godkännande</span>
+
+                    {# Lämna BARA kvar knappen här inuti listan #}
+                    {% if chore.proof_image_url %}
+                    <button type="button" class="btn-btn btn-primary btn-small"
+                        onclick="openProofModal('{{ chore.id }}')">
+                        👁️ Visa bild & hantera
+                    </button>
+                    {% else %}
+                    <form action="/approve/{{ chore.id }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-success">✅ Bevilja</button>
+                    </form>
+                    <form action="/reject/{{ chore.id }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">❌ Neka</button>
+                    </form>
+                    {% endif %}
                     {% endif %}
 
-                    {# Admin kan alltid ta bort i denna vy #}
+                    {# Ta bort-knappen visas bara för admin #}
+                    {% if session["role"] == "admin" %}
+                    {% endif %}
+
                     <form action="/delete/{{ chore.id }}" method="POST" style="display: inline;"
                         onsubmit="return confirm('Vill du ta bort sysslan permanent?');">
                         <button type="submit" class="btn-icon-danger">🗑️</button>
                     </form>
                 </div>
+
+
             </li>
 
             {% endif %}
@@ -665,11 +693,81 @@
 
 
 
+        {% for chore in chores %}
+        {% if chore.is_completed and chore.proof_image_url %}
+        <div id="proofModal-{{ chore.id }}" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Granska: {{ chore.title }}</h2>
+                    <!-- Kryss för att stänga, anropar stäng-funktionen med rätt ID -->
+                    <span class="close-modal" onclick="closeProofModal('{{ chore.id }}')">&times;</span>
+                </div>
+
+                <div class="admin-modal-scroll-area" style="text-align: center; padding: 20px 0;">
+                    <p style="margin-bottom: 15px; opacity: 0.8;">Inskickad av: {{ chore.users.name }}</p>
+
+                    <!-- Den stora bevisbilden -->
+                    <div style="margin-bottom: 25px;">
+                        <img src="{{ chore.proof_image_url }}" alt="Bevisbild"
+                            style="max-width: 100%; max-height: 450px; border-radius: 8px; object-fit: contain;">
+                    </div>
+
+                    <!-- Hanteringsknappar längst ner i scrollområdet -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                        <button type="button" class="btn-btn" style="background-color: #6c757d; color: white;"
+                            onclick="closeProofModal('{{ chore.id }}')">Avbryt</button>
+
+                        <div style="display: flex; gap: 10px;">
+                            {# Knapp för Neka #}
+                            <form action="/reject/{{ chore.id }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn-btn"
+                                    style="background-color: #dc3545; color: white; padding: 8px 16px;">❌ Neka</button>
+                            </form>
+
+                            {# Knapp för Bevilja #}
+                            <form action="/approve/{{ chore.id }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn-btn btn-primary"
+                                    style="background-color: #28a745; color: white; padding: 8px 16px;">✅
+                                    Bevilja</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+
+
+
 
     </div>
 
     <!-- MODAL LOGIK (JAVASCRIPT) -->
     <script>
+        function openProofModal(choreId) {
+            const modal = document.getElementById('proofModal-' + choreId);
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        }
+
+        function closeProofModal(choreId) {
+            const modal = document.getElementById('proofModal-' + choreId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Stäng modalen om användaren klickar utanför modal-content
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
 
     </script>
 </body>

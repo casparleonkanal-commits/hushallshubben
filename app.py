@@ -131,7 +131,48 @@ def complete(chore_id):
     if "user_id" not in session:
         return redirect("/login")
         
-    complete_chore(chore_id)
+    file = None
+
+    # Kräv bild om användaren INTE är admin
+    if session.get("role") != "admin":
+        if 'proof_image' not in request.files: 
+            return redirect("/")
+            
+        file = request.files['proof_image']
+        if file.filename == '':
+            return redirect("/")
+
+    # Skicka med filobjektet (blir None om admin klickar)
+    complete_chore(chore_id, image_file=file)
+    
+    return redirect("/")
+
+@app.route('/approve/<int:chore_id>', methods=['POST'])
+def approve_chore(chore_id):
+    # Säkerställ att användaren är inloggad och är admin
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect("/login")
+
+    # Bevilja = Radera sysslan från tabellen
+    supabase.table("chores").delete().eq("id", chore_id).execute()
+    
+    print(f"Syssla ID {chore_id} godkänd och raderad av admin.")
+    return redirect("/")
+
+
+@app.route('/reject/<int:chore_id>', methods=['POST'])
+def reject_chore(chore_id):
+    # Säkerställ att användaren är inloggad och är admin
+    if "user_id" not in session or session.get("role") != "admin":
+        return redirect("/login")
+
+    # Neka = Sätt is_completed till False och töm bildlänken (sätt till None)
+    supabase.table("chores").update({
+        "is_completed": False,
+        "proof_image_url": None
+    }).eq("id", chore_id).execute()
+    
+    print(f"Syssla ID {chore_id} nekad och återställd till ej klar.")
     return redirect("/")
 
 from datetime import datetime, timezone
