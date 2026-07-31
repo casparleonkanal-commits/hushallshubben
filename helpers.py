@@ -248,7 +248,7 @@ def send_push_notification(message, user_id=None):
         return
 
     # 1. Konfigurera API-nyckeln (REST API Key)
-    configuration = onesignal.Configuration(
+    configuration = Configuration(
         rest_api_key=api_key
     )
 
