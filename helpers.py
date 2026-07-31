@@ -231,3 +231,40 @@ def setup_base_chores(family_id):
     except Exception as e:
         print(f"Fel vid uppstart av bassysslor: {e}")
         return False
+
+import os
+from onesignal import OneSignal, Notification
+
+def send_push_notification(message, target_user_id=None):
+    """Skickar en push-notis. Om target_user_id anges får bara den personen notisen, annars får alla den."""
+    
+    # Hämta nycklarna från Renders miljövariabler
+    app_id = os.environ.get("ONESIGNAL_APP_ID")
+    api_key = os.environ.get("ONESIGNAL_API_KEY")
+    
+    if not app_id or not api_key:
+        print("OneSignal-nycklar saknas i miljövariablerna!")
+        return
+
+    # Initiera OneSignal-klienten
+    client = OneSignal(app_id, api_key)
+
+    # Skapa själva notis-innehållet
+    notification = Notification(
+        contents={"en": message, "sv": message},
+        headings={"en": "Hushållshubben 🏠", "sv": "Hushållshubben 🏠"}
+    )
+
+    if target_user_id:
+        # Skicka till en specifik användare (kräver att OneSignal.login anropats i JS)
+        notification.include_aliases = {"external_id": [str(target_user_id)]}
+        notification.target_channel = "push"
+    else:
+        # Skicka till alla som prenumererar
+        notification.included_segments = ["All Subscriptions"]
+
+    try:
+        response = client.send_notification(notification)
+        print("Push-notis skickad utan problem:", response)
+    except Exception as e:
+        print("Kunde inte skicka push-notis:", e)

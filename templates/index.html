@@ -21,6 +21,29 @@
     <meta name="apple-mobile-web-app-title" content="Hushållshubben">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3061/3061331.png">
 
+    <script src="https://onesignal.com" async></script>
+    <script>
+        window.OneSignalChoreApp = window.OneSignalChoreApp || [];
+        OneSignalChoreApp.push(async function () {
+            await OneSignal.init({
+                appId: "DIN_ONESIGNAL_APP_ID_HÄR", // Ersätt med ditt unika App ID från OneSignal
+                safari_web_id: "",
+                notifyButton: {
+                    enable: true,
+                },
+            });
+
+            // Flask sätter in ID:t eller lämnar strängen tom. VS Code ser bara en vanlig sträng!
+            const currentUserId = "{{ session.get('user_id', '') }}";
+
+            if (currentUserId) {
+                await OneSignal.login(currentUserId);
+                console.log("Inloggad i OneSignal med ID: " + currentUserId);
+            }
+        });
+    </script>
+
+
     <script>
         // Registrera vår Service Worker
         if ('serviceWorker' in navigator) {
@@ -601,8 +624,8 @@
                         {% if session["role"] != "admin" %}
                         <div class="mb-2">
                             <label for="proof_image" class="form-label">Ladda upp bevis (bild):</label>
-                            <input type="file" class="form-control" id="proof_image" name="proof_image" accept="image/*,android/allowCamera" capture="environment"
-                                required>
+                            <input type="file" class="form-control" id="proof_image" name="proof_image"
+                                accept="image/*,android/allowCamera" capture="environment" required>
                         </div>
                         {% endif %}
                         <button type="submit" class="btn btn-success">Klar! 👍</button>

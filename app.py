@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for
 from helpers import (
     add_chore, get_chores_by_family, complete_chore, get_users_by_family,
-    register_user, create_family_and_make_admin, join_family_with_code, setup_base_chores,
+    register_user, create_family_and_make_admin, join_family_with_code, setup_base_chores, send_push_notification,
     supabase
 )
 from werkzeug.security import check_password_hash
@@ -122,6 +122,14 @@ def add():
     
     if title:
         add_chore(title, session["family_id"], assigned_to)
+
+    if assigned_to:
+        # Skicka pushnotis till den användaren
+        send_push_notification(
+            user_id=assigned_to,
+            title="Ny syssla tilldelad",
+            message=f"Du har fått sysslan: {title}"
+        )
         
     return redirect("/tasks")
 
@@ -370,3 +378,9 @@ def onboarding():
                 return "Felaktig inbjudningskod.", 400
                 
     return render_template("onboarding.html")
+
+from flask import send_from_directory
+
+@app.route('/OneSignalSDKWorker.js')
+def onesignal_worker():
+    return send_from_directory('static', 'OneSignalSDKWorker.js', mimetype='application/javascript')
