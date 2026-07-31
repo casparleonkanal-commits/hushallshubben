@@ -233,7 +233,7 @@ def setup_base_chores(family_id):
         return False
 
 import os
-from onesignal import OneSignal, Notification
+from onesignal import OneSignal, notification
 
 def send_push_notification(message, target_user_id=None):
     """Skickar en push-notis. Om target_user_id anges får bara den personen notisen, annars får alla den."""
@@ -250,7 +250,7 @@ def send_push_notification(message, target_user_id=None):
     client = OneSignal(app_id, api_key)
 
     # Skapa själva notis-innehållet
-    notification = Notification(
+    notification = notification(
         contents={"en": message, "sv": message},
         headings={"en": "Hushållshubben 🏠", "sv": "Hushållshubben 🏠"}
     )
