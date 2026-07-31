@@ -601,7 +601,7 @@
                         {% if session["role"] != "admin" %}
                         <div class="mb-2">
                             <label for="proof_image" class="form-label">Ladda upp bevis (bild):</label>
-                            <input type="file" class="form-control" id="proof_image" name="proof_image" accept="image/*" capture="environment"
+                            <input type="file" class="form-control" id="proof_image" name="proof_image" accept="image/*,android/allowCamera" capture="environment"
                                 required>
                         </div>
                         {% endif %}
